@@ -314,7 +314,7 @@ class CAS_Client
     {
         // the URL is build only when needed
         if ( empty($this->_server['base_url']) ) {
-            $this->_server['base_url'] = 'https://' . $this->_getServerHostname();
+            $this->_server['base_url'] =  ($this->_isHttps() ? 'https://' : 'http://') . $this->_getServerHostname();
             if ($this->_getServerPort()!=443) {
                 $this->_server['base_url'] .= ':'
                 .$this->_getServerPort();
