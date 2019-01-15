@@ -263,6 +263,7 @@ class CAS_Client
         'version' => -1,
         'hostname' => 'none',
         'port' => -1,
+        'scheme' => 'http',
         'uri' => 'none');
 
     /**
@@ -314,7 +315,7 @@ class CAS_Client
     {
         // the URL is build only when needed
         if ( empty($this->_server['base_url']) ) {
-            $this->_server['base_url'] =  ($this->_isHttps() ? 'https://' : 'http://') . $this->_getServerHostname();
+            $this->_server['base_url'] =  $this->_server['scheme'] . '://' . $this->_getServerHostname();
             if ($this->_getServerPort()!=443) {
                 $this->_server['base_url'] .= ':'
                 .$this->_getServerPort();
@@ -907,6 +908,10 @@ class CAS_Client
         $server_uri,
         $changeSessionID = true
     ) {
+        list($port, $scheme) = explode('/', $server_port);
+        $port = (int)$port;
+        $this->_server['scheme'] = $scheme;
+
 		// Argument validation
         if (gettype($server_version) != 'string')
         	throw new CAS_TypeMismatchException($server_version, '$server_version', 'string');
@@ -914,8 +919,8 @@ class CAS_Client
         	throw new CAS_TypeMismatchException($proxy, '$proxy', 'boolean');
         if (gettype($server_hostname) != 'string')
         	throw new CAS_TypeMismatchException($server_hostname, '$server_hostname', 'string');
-        if (gettype($server_port) != 'integer')
-        	throw new CAS_TypeMismatchException($server_port, '$server_port', 'integer');
+        if (gettype($port) != 'integer')
+        	throw new CAS_TypeMismatchException($port, '$server_port', 'integer');
         if (gettype($server_uri) != 'string')
         	throw new CAS_TypeMismatchException($server_uri, '$server_uri', 'string');
         if (gettype($changeSessionID) != 'boolean')
@@ -984,12 +989,12 @@ class CAS_Client
         $this->_server['hostname'] = $server_hostname;
 
         // check port
-        if ( $server_port == 0
-            || !is_int($server_port)
+        if ( $port == 0
+            || !is_int($port)
         ) {
             phpCAS::error('bad CAS server port (`'.$server_hostname.'\')');
         }
-        $this->_server['port'] = $server_port;
+        $this->_server['port'] = $port;
 
         // check URI
         if ( !preg_match('/[\.\d\-_abcdefghijklmnopqrstuvwxyz\/]*/', $server_uri) ) {
