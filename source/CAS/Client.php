@@ -910,7 +910,9 @@ class CAS_Client
     ) {
         list($port, $scheme) = explode('/', $server_port);
         $port = (int)$port;
-        $this->_server['scheme'] = $scheme;
+	if ($scheme) {
+	    $this->_server['scheme'] = $scheme;	
+	}
 
 		// Argument validation
         if (gettype($server_version) != 'string')
